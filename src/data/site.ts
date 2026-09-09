@@ -80,6 +80,34 @@ export const features = [
   "Lifetime member portal access",
 ];
 
+/** Visuals paired with the What's Inside list — one per feature, real assets only. */
+export const featureMedia = [
+  {
+    src: "/assets/all-products.jpg",
+    alt: "The complete ForLife toolkit: desktop and phone wallpapers, printed reflection journals and affirmation bookmarks",
+  },
+  {
+    src: "/assets/reflection-journal.jpg",
+    alt: "The 30-Day Daily Reflection Journal open on a table, showing weekly prompts",
+  },
+  {
+    src: "/assets/wallpaper-grid.jpg",
+    alt: "ForLife affirmation wallpapers displayed across a grid of phones",
+  },
+  {
+    src: "/assets/toolkit-spread.jpg",
+    alt: "The reflection journal open beside a printed affirmation bookmark and a phone",
+  },
+  {
+    src: "/assets/wallpaper-iphone.jpg",
+    alt: "A ForLife affirmation wallpaper on a phone resting on dark stone",
+  },
+  {
+    src: "/assets/wallpaper-android.jpg",
+    alt: "A phone displaying the affirmation: I allow myself to dream without judgment",
+  },
+];
+
 export const insideTrust = [
   "Instant digital delivery",
   "One-time purchase",

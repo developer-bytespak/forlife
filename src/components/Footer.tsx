@@ -1,8 +1,31 @@
 import { footerCols, links } from "../data/site";
+import { Line } from "./Reveal";
+import { MOTION, drawRules, gsap, useMotion } from "../lib/motion";
 
 export default function Footer() {
+  const root = useMotion<HTMLElement>((mm, scope) => {
+    mm.add(MOTION, () => {
+      gsap
+        .timeline({ scrollTrigger: { trigger: scope, start: "top 88%", once: true } })
+        .from(".footer__logo", { y: 18, autoAlpha: 0, duration: 0.7, ease: "power3.out" })
+        .from(
+          ".footer__statement .line > span",
+          { yPercent: 112, duration: 1, ease: "power3.out", stagger: 0.085 },
+          0.1,
+        )
+        .from(
+          ".footer__cols h3, .footer__cols li",
+          { y: 16, autoAlpha: 0, duration: 0.6, ease: "power3.out", stagger: 0.03 },
+          0.3,
+        )
+        .from(".footer__bottom > *", { y: 14, autoAlpha: 0, duration: 0.6, stagger: 0.08 }, 0.6);
+
+      drawRules(".footer__divider", scope);
+    });
+  });
+
   return (
-    <footer className="footer dark-surface">
+    <footer className="footer dark-surface" ref={root}>
       <div className="shell">
         <div className="footer__top">
           <div>
@@ -20,14 +43,13 @@ export default function Footer() {
             </a>
 
             <p className="footer__statement">
-              For dreamers.
-              <br />
-              For doers.
-              <br />
-              For believers.
-              <br />
-              For achievers.
-              <span className="serif">ForLife.</span>
+              <Line>For dreamers.</Line>
+              <Line>For doers.</Line>
+              <Line>For believers.</Line>
+              <Line>For achievers.</Line>
+              <Line>
+                <span className="serif">ForLife.</span>
+              </Line>
             </p>
           </div>
 
@@ -44,7 +66,7 @@ export default function Footer() {
                           ? {}
                           : { target: "_blank", rel: "noreferrer" })}
                       >
-                        {item.label}
+                        <span>{item.label}</span>
                       </a>
                     </li>
                   ))}
@@ -54,17 +76,19 @@ export default function Footer() {
           </div>
         </div>
 
+        <i className="footer__divider" aria-hidden="true" />
+
         <div className="footer__bottom">
           <p>© 2026 ForLife / IVL</p>
           <nav aria-label="Legal">
             <a href={links.about} target="_blank" rel="noreferrer">
-              Privacy
+              <span>Privacy</span>
             </a>
             <a href={links.about} target="_blank" rel="noreferrer">
-              Terms
+              <span>Terms</span>
             </a>
             <a href={links.about} target="_blank" rel="noreferrer">
-              Contact Information
+              <span>Contact Information</span>
             </a>
           </nav>
         </div>

@@ -1,45 +1,79 @@
-import { features, insideTrust } from "../data/site";
-import Reveal from "./Reveal";
+import { useState } from "react";
+import { featureMedia, features, insideTrust } from "../data/site";
+import { Line } from "./Reveal";
+import { DESKTOP, MOTION, ScrollTrigger, drawRules, fadeUp, gsap, maskIn, useMotion } from "../lib/motion";
 
 export default function WhatsInside() {
-  return (
-    <section className="section inside" id="whats-inside">
-      <div className="shell inside__grid">
-        <Reveal className="inside__media">
-          <img
-            src="/assets/all-products.jpg"
-            alt="The complete ForLife toolkit: desktop and phone wallpapers, printed reflection journals and affirmation bookmarks"
-            width={1000}
-            height={1000}
-            loading="lazy"
-            decoding="async"
-          />
-          <div className="inside__media-row">
-            <img
-              src="/assets/wallpaper-iphone.jpg"
-              alt="A ForLife affirmation wallpaper on a phone resting on dark stone"
-              width={600}
-              height={600}
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              src="/assets/reflection-journal.jpg"
-              alt="The 30-Day Daily Reflection Journal open on a table, showing weekly prompts"
-              width={600}
-              height={600}
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-        </Reveal>
+  const [active, setActive] = useState(0);
 
-        <Reveal className="inside__copy" delay={90}>
+  const root = useMotion<HTMLElement>((mm, scope) => {
+    mm.add(MOTION, () => {
+      gsap
+        .timeline({ scrollTrigger: { trigger: scope, start: "top 72%", once: true } })
+        .from(".inside__copy .eyebrow", { y: 16, autoAlpha: 0, duration: 0.7, ease: "power3.out" })
+        .from(
+          ".inside__copy h2 .line > span",
+          { yPercent: 115, duration: 1, ease: "power3.out", stagger: 0.09 },
+          0.1,
+        )
+        .from(".inside__copy .lede", { y: 20, autoAlpha: 0, duration: 0.8 }, 0.4);
+
+      maskIn(".inside__stack", ".inside__stack img", { trigger: scope });
+      drawRules(".features .rule", ".features");
+      fadeUp(".features .txt, .features .num", {
+        trigger: ".features",
+        stagger: 0.05,
+        delay: 0.1,
+      });
+      fadeUp(".inside__pills li", { trigger: ".inside__pills", stagger: 0.06 });
+    });
+
+    // Desktop: the sticky visual follows whichever feature is in the reading band.
+    mm.add(DESKTOP, () => {
+      gsap.utils.toArray<HTMLElement>(".features li").forEach((li, i) => {
+        const mark = () => setActive(i);
+        ScrollTrigger.create({
+          trigger: li,
+          start: "top 62%",
+          end: "bottom 45%",
+          onEnter: mark,
+          onEnterBack: mark,
+        });
+      });
+    });
+  });
+
+  return (
+    <section className="section inside" id="whats-inside" ref={root}>
+      <div className="shell inside__grid">
+        <div className="inside__media">
+          <div className="inside__stack">
+            {featureMedia.map((m, i) => (
+              <img
+                key={m.src}
+                src={m.src}
+                alt={i === 0 ? m.alt : ""}
+                width={1000}
+                height={1000}
+                loading="lazy"
+                decoding="async"
+                className={i === active % featureMedia.length ? "is-active" : ""}
+                aria-hidden={i === active % featureMedia.length ? undefined : true}
+              />
+            ))}
+            <span className="inside__stack-tag" aria-hidden="true">
+              {`0${(active % features.length) + 1}`} / {`0${features.length}`}
+            </span>
+          </div>
+        </div>
+
+        <div className="inside__copy">
           <p className="eyebrow">What's inside</p>
           <h2 className="h2">
-            Growth tools made for
-            <br />
-            <span className="serif">real life.</span>
+            <Line>Growth tools made for</Line>
+            <Line>
+              <span className="serif">real life.</span>
+            </Line>
           </h2>
           <p className="lede">
             Everything is digital, everything is yours to keep, and everything is designed to be
@@ -48,9 +82,10 @@ export default function WhatsInside() {
 
           <ol className="features">
             {features.map((f, i) => (
-              <li key={f}>
+              <li key={f} className={i === active ? "is-active" : ""}>
                 <span className="num">{`0${i + 1}`}</span>
                 <span className="txt">{f}</span>
+                <i className="rule" aria-hidden="true" />
               </li>
             ))}
           </ol>
@@ -62,7 +97,7 @@ export default function WhatsInside() {
               </li>
             ))}
           </ul>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
